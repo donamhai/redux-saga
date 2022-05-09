@@ -1,11 +1,18 @@
 import { Box } from "@material-ui/core";
-import * as React from "react";
+import React, {useEffect} from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { ListPage } from "./pages/ListPage";
 import { AddEditPage } from "./pages/AddEditPage";
+import { useAppDispatch } from "app/hooks";
+import { cityActions } from "features/city/citySlice";
 
 export function StudentFeature() {
   const match = useRouteMatch();
+  const dispatch = useAppDispatch()
+
+  useEffect(()=>{
+    dispatch(cityActions.fetCityList())
+  },[])
   return (
     <Box>
       <Switch>

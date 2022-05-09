@@ -10,12 +10,15 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { Student } from "model";
+import { City, Student } from "model";
 import * as React from "react";
 import { capitalizeString, getMarkColor } from "utils";
 
 export interface StudentTableProps {
   studentList: Student[];
+  cityMap:{
+    [key:string]: City
+  }
   onEdit?: (student: Student) => void;
   onRemove?: (student: Student) => void;
 }
@@ -31,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 export function StudentTable({
   studentList,
   onEdit,
+  cityMap,
   onRemove,
 }: StudentTableProps) {
   const classes = useStyles();
@@ -58,7 +62,7 @@ export function StudentTable({
                   {student.mark}
                 </Box>
               </TableCell>
-              <TableCell>{student.city}</TableCell>
+              <TableCell>{cityMap[student.city]?.name}</TableCell>
               <TableCell align="right">
                 <Button
                   size="small"

@@ -7,8 +7,11 @@ import {
 } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import { useAppDispatch, useAppSelector } from "app/hooks";
+import { selectCityList, selectCityMap } from "features/city/citySlice";
+import { ListParams } from "model";
 import * as React from "react";
 import { useEffect } from "react";
+import { StudentFilters } from "../components/StudentFilters";
 import { StudentTable } from "../components/StudentTable";
 import {
   selectStudentFilter,
@@ -44,6 +47,8 @@ export function ListPage() {
   const pagination = useAppSelector(selectStudentPagination);
   const filter = useAppSelector(selectStudentFilter);
   const loading = useAppSelector(selectStudentLoading);
+  const cityMap = useAppSelector(selectCityMap);
+  const cityList = useAppSelector(selectCityList);
 
   useEffect(() => {
     dispatch(studentActions.fetchStudentList(filter));
@@ -58,6 +63,14 @@ export function ListPage() {
     );
   };
 
+  const handleSearchChange = (newFilter: ListParams) => {
+    dispatch(studentActions.setFilterWithDebounce(newFilter));
+  };
+
+  const handleFilterChange = (newFilter: ListParams) => {
+    dispatch(studentActions.setFilter(newFilter));
+  };
+
   return (
     <Box className={classes.root}>
       {loading && <LinearProgress className={classes.loading} />}
@@ -68,8 +81,18 @@ export function ListPage() {
         </Button>
       </Box>
 
+      <Box mb={3}>
+        {/* Filter */}
+        <StudentFilters
+          filter={filter}
+          cityList={cityList}
+          onSearchChange={handleSearchChange}
+          onChange={handleFilterChange}
+        />
+      </Box>
+
       {/* Student table */}
-      <StudentTable studentList={studentList} />
+      <StudentTable studentList={studentList} cityMap={cityMap} />
 
       <Box mt={2} display="flex" justifyContent="center">
         <Pagination
