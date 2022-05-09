@@ -6,9 +6,10 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
+import studentApi from "api/studentApi";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { selectCityList, selectCityMap } from "features/city/citySlice";
-import { ListParams } from "model";
+import { ListParams, Student } from "model";
 import * as React from "react";
 import { useEffect } from "react";
 import { StudentFilters } from "../components/StudentFilters";
@@ -20,6 +21,7 @@ import {
   selectStudentPagination,
   studentActions,
 } from "../studentSlice";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 
 const useStyle = makeStyles((theme) => ({
   root: { position: "relative", paddingTop: theme.spacing(1) },
@@ -42,6 +44,7 @@ const useStyle = makeStyles((theme) => ({
 
 export function ListPage() {
   const dispatch = useAppDispatch();
+  const history = useHistory();
   const classes = useStyle();
   const studentList = useAppSelector(selectStudentList);
   const pagination = useAppSelector(selectStudentPagination);
@@ -53,6 +56,8 @@ export function ListPage() {
   useEffect(() => {
     dispatch(studentActions.fetchStudentList(filter));
   }, [dispatch, filter]);
+
+  const match = useRouteMatch();
 
   const handlePageChange = (e: any, page: number) => {
     dispatch(
@@ -71,14 +76,34 @@ export function ListPage() {
     dispatch(studentActions.setFilter(newFilter));
   };
 
+  const handleRemoveStudent = async (student: Student) => {
+    try {
+      //remove student APi
+      await studentApi.remove(student.id || "");
+
+      // trigger to refresh student list with current filter
+      const newFilter = { ...filter };
+      dispatch(studentActions.setFilter(newFilter));
+    } catch (error) {
+      console.log("failed to fetch student", error);
+    }
+  };
+
+  const handleEditStudent = async (student: Student) => {
+    history.push(`${match.url}/${student.id}`);
+  };
+
   return (
     <Box className={classes.root}>
       {loading && <LinearProgress className={classes.loading} />}
       <Box className={classes.titleContainer}>
         <Typography variant="h4">Student</Typography>
-        <Button variant="contained" color="primary">
-          Add new student
-        </Button>
+
+        <Link to={`${match.url}/add`} style={{ textDecoration: "none" }}>
+          <Button variant="contained" color="primary">
+            Add new student
+          </Button>
+        </Link>
       </Box>
 
       <Box mb={3}>
@@ -92,7 +117,12 @@ export function ListPage() {
       </Box>
 
       {/* Student table */}
-      <StudentTable studentList={studentList} cityMap={cityMap} />
+      <StudentTable
+        studentList={studentList}
+        cityMap={cityMap}
+        onRemove={handleRemoveStudent}
+        onEdit={handleEditStudent}
+      />
 
       <Box mt={2} display="flex" justifyContent="center">
         <Pagination
