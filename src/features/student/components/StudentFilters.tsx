@@ -11,7 +11,6 @@ import {
 import { Search } from "@material-ui/icons";
 import { City, ListParams } from "model";
 import React, { useRef } from "react";
-import { VoidExpression } from "typescript";
 
 export interface StudentFiltersProps {
   filter: ListParams;

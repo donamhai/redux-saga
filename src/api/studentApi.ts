@@ -18,7 +18,7 @@ const studentApi = {
   },
 
   update(data: Student): Promise<Student> {
-    const url = "/students";
+    const url = `/students/${data.id}`;
     return axiosClient.patch(url, data);
   },
 

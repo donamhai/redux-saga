@@ -22,6 +22,7 @@ import {
   studentActions,
 } from "../studentSlice";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const useStyle = makeStyles((theme) => ({
   root: { position: "relative", paddingTop: theme.spacing(1) },
@@ -84,6 +85,7 @@ export function ListPage() {
       // trigger to refresh student list with current filter
       const newFilter = { ...filter };
       dispatch(studentActions.setFilter(newFilter));
+      toast.success("Remove student successfully");
     } catch (error) {
       console.log("failed to fetch student", error);
     }
